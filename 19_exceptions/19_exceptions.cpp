@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 using namespace std;
 
 
@@ -234,9 +235,9 @@ public:
 	void addToHead(T val) {
 		Node* newNode = new Node(nullptr, val, head);
 
-		if (isEmpty())
+		if (isEmpty()){
 			head = tail = newNode;
-
+		}
 		else
 		{
 			head->prev = newNode;
@@ -259,36 +260,41 @@ public:
 
 
 	void deleteFromHead() {
-		if (isEmpty())
-			return;
-
-		if (head->next == nullptr)
-		{
-			delete head;
-			head = tail = nullptr;
-		}
+		if (head == nullptr)
+			throw out_of_range("list is empty.cant delete");
 		else
 		{
-			head = head->next;
-			delete head->prev;
-			head->prev = nullptr;
+			if (head->next == nullptr)
+			{
+				delete head;
+				head = tail = nullptr;
+			}
+			else
+			{
+				head = head->next;
+				delete head->prev;
+				head->prev = nullptr;
+			}
 		}
 	}
 
 	void deleteFromTail() {
-		if (isEmpty())
-			return;
+		if (head == nullptr)
+			throw out_of_range("list is empty.cant delete");
 
-		if (tail->prev == nullptr)
-		{
-			delete head;
-			head = tail = nullptr;
-		}
 		else
 		{
-			tail = tail->prev;
-			delete tail->next;
-			tail->next = nullptr;
+			if (tail->prev == nullptr)
+			{
+				delete head;
+				head = tail = nullptr;
+			}
+			else
+			{
+				tail = tail->prev;
+				delete tail->next;
+				tail->next = nullptr;
+			}
 		}
 	}
 
@@ -323,6 +329,9 @@ public:
 	}
 
 	void addByIndex(int index, T value) {
+		if (index<0 or index>getCount())
+			throw out_of_range("wrong index");
+
 		if (index == 0)
 			addToHead(value);
 
@@ -330,10 +339,10 @@ public:
 			addToTail(value);
 
 		else if (index > getCount())
-			return;
+			throw out_of_range("index>size");
 
 		else if (index < 0)
-			return;
+			throw out_of_range("index<0");
 
 		else
 		{
@@ -349,6 +358,13 @@ public:
 	}
 
 	void deleteByIndex(int index) {
+		if (isEmpty())
+			throw out_of_range("list is empty");
+
+		if (index<0 or index>getCount())
+			throw out_of_range("wrong index");
+
+
 		if (index == 0)
 			deleteFromHead();
 
@@ -356,10 +372,10 @@ public:
 			deleteFromTail();
 
 		else if (index > getCount() - 1)
-			return;
+			throw out_of_range("index>size");
 
 		else if (index < 0)
-			return;
+			throw out_of_range("index<0");
 
 		else
 		{
@@ -389,10 +405,78 @@ public:
 
 
 
+int stringToInt(const char* str) {
+	int res = 0;
+	if (str==nullptr)
+		throw invalid_argument("no words");
+
+	if (str[0] == '\0')
+		throw invalid_argument("empty string");
+
+	for (int i = 0; str[i] != '\0'; i++)
+	{
+		if (!isdigit((unsigned char)str[i]))
+			throw invalid_argument("leters in number");
+
+		int digit = str[i] - '0';
+
+		if (res > (numeric_limits<int>::max() - digit) / 10)
+			throw out_of_range("number is too big");
+
+
+		res = res * 10 + digit;
+	}
+
+
+
+	return res;
+}
+
 int main()
 {
 	//2
 
+	try
+	{
+		cout << stringToInt("9835495834954854");
+	}
+	catch (invalid_argument ex)
+	{
+			cout << ex.what() << endl;
+	}
+	catch (out_of_range ex)
+	{
+			cout << ex.what() << endl;
+	}
+	catch (...) {
+		cout << "unknown error" << endl;
+	}
+
+
+	//try
+	//{
+	//	List<int> l;
+	//	for (int i = 0; i < 0; i++)
+	//	{
+	//		l.addToHead(i);
+	//	}
+	//	l.print();
+	//	//l.deleteByIndex(2);
+	//	l.print();
+	//	//l.deleteFromHead();
+	//	l.print();
+	//	l.deleteFromTail();
+	//	l.print();
+	//	l.addByIndex(2, 99999);
+	//	l.print();
+	//}
+	//catch (out_of_range ex)
+	//{
+	//	cout << ex.what() << endl;
+	//}
+	//catch (...) {
+	//	cout << "unknown error" << endl;
+	//}
 
 
 
